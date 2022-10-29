@@ -1,0 +1,74 @@
+body {
+
+    box-sizing: border-box;
+    background: rgb(200,97,97);
+    background: -moz-radial-gradient(circle, rgba(200,97,97,1) 0%, rgba(83,34,34,1) 100%);
+    background: -webkit-radial-gradient(circle, rgba(200,97,97,1) 0%, rgba(83,34,34,1) 100%);
+    background: radial-gradient(circle, rgba(200,97,97,1) 0%, rgba(83,34,34,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#c86161",endColorstr="#532222",GradientType=1);
+}
+.cover-container {
+    max-width: 70%;
+}
+
+.btn-secondary,
+.btn-secondary:hover,
+.btn-secondary:focus {
+  color: #333;
+  text-shadow: none;
+}
+
+
+.nav-masthead .nav-link {
+  padding: .25rem 0;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .8);
+  background-color: transparent;
+  border-bottom: .25rem solid transparent;
+}
+
+.nav-masthead .nav-link:hover,
+.nav-masthead .nav-link:focus {
+    color: #fff;
+    border-bottom-color: #fff;
+}
+
+.nav-masthead .nav-link + .nav-link {
+  margin-left: 1rem;
+}
+
+.btn-dark:hover{
+  background-color: #404040;
+  border-color: #404040;
+}
+
+.custom-file-button input[type=file] {
+  margin-left: -2px !important;
+}
+
+.custom-file-button input[type=file]::-webkit-file-upload-button {
+  display: none;
+}
+
+.custom-file-button input[type=file]::file-selector-button {
+  display: none;
+}
+
+.custom-file-button:hover label {
+  background-color: #dde0e3;
+  cursor: pointer;
+}
+
+.list-group-item{
+  background-color: transparent;
+  color: white; 
+  border-color: transparent;
+}
+.list-group-item:hover{
+  background-color: #404040;
+  cursor:pointer;
+  transition: background-color 0.5s ease;
+}
+.active{
+  background-color: rgb(33,37,41);
+}
