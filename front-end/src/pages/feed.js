@@ -8,7 +8,7 @@ import { Friends } from "../feed/friends";
 
 export function Feed(){
     
-    const [tabIndex, setTabIndex] = useState(2);
+    const [tabIndex, setTabIndex] = useState(3);
 
     return(
         <div className="container-fluid">
