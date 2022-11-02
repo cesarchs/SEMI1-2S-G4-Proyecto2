@@ -26,12 +26,10 @@ export function holaU (req, res ) {
 }
 
 export function subirfotoS3 (request,uniqueId, format,extension){
-    var foto = request.body.base64; 
+    var foto = request.body.photo; 
     var nombrei = "fotos/" + uniqueId +extension ; 
 
     let buff = new Buffer.from(foto.split(";base64,")[1], 'base64');
-    console.log(buff)
-
 
     AWS.config.update({
         region: aws_keys.s3.region, // se coloca la region del bucket 
@@ -106,70 +104,6 @@ export function subirArchivoTxt (request,uniqueId, format,extension){
 }
 
 
-export function getPhoto (req, res) {
-    var id = req.body.id;
-    var nombrei = "fotos/"+id+".jpg";
-
-    AWS.config.update({
-        region: aws_keys.s3.region, // se coloca la region del bucket 
-        accessKeyId: aws_keys.s3.accessKeyId,
-        secretAccessKey: aws_keys.s3.secretAccessKey
-    });
-
-
-    var S3 = new AWS.S3();
-
-    var getParams = 
-    {
-        Bucket: "grupo4proyecto2",
-        Key: nombrei
-    }
-
-    S3.getObject(getParams, function(err, data){
-        if (err)
-        {
-            res.json(err)
-        }else
-        {
-            var dataBase64 = Buffer.from(data.Body).toString('base64'); //resgresar de byte a base
-            res.json({mensaje: dataBase64})
-        }
-
-    })
-
-}
-
-
-export function VerS3 (req, res) {
-
-    AWS.config.update({
-        region: aws_keys.s3.region, // se coloca la region del bucket 
-        accessKeyId: aws_keys.s3.accessKeyId,
-        secretAccessKey: aws_keys.s3.secretAccessKey
-    });
-
-
-    var S3 = new AWS.S3();
-
-    var getParams = 
-    {
-        Bucket: "grupo4proyecto2"
-    }
-
-    S3.listObjectsV2(getParams, function(err, data){
-        if (err)
-        {
-            res.json(err)
-        }else
-        {
-            res.json({mensaje: data.Contents})
-        }
-
-    })
-
-}
-
-
 
 export function eliminarfotoS3 (url){
 
@@ -206,35 +140,3 @@ export function eliminarfotoS3 (url){
 
 
 export default app
-
-/**export function subirArchivoPdf (request,uniqueId){
-
-    var file = request.body.base64;
-    
-    //carpeta y nombre que quieran darle a la imagen
-  
-    var nombrei = "pdf/" + uniqueId + ".pdf"; // fotos -> se llama la carpeta 
-    //se convierte la base64 a bytes
-    let buff = new Buffer.from(file, 'base64');
-  
-
-
-    AWS.config.update({
-        region: aws_keys.s3.region, // se coloca la region del bucket 
-        accessKeyId: aws_keys.s3.accessKeyId,
-        secretAccessKey: aws_keys.s3.secretAccessKey
-    });
-
-    var s3 = new AWS.S3(); // se crea una variable que pueda tener acceso a las caracteristicas de S3
-    // metodo 1
-    const params = {
-      Bucket: "archivos-2grupo-p1",
-      Key: nombrei,
-      Body: buff,
-      ContentType: "application/pdf"
-    };
-    const putResult = s3.putObject(params).promise();
-    //response.json({ mensaje: putResult })
-
-}
- */

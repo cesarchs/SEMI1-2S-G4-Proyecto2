@@ -7,10 +7,10 @@ import appArchivo from '../controllers/archivo.controller.js'
 const Router = express();
 
 //Routers 
-Router.get('/',              appLogin) // de prueba
+Router.get('/',                     appLogin) // de prueba
 Router.get('/holaUsuario',          appUsuario) // de prueba
 Router.get('/holaArchivo',          appArchivo) // de prueba
-Router.get('/holaU',                appArchivo) // de prueba
+Router.get('/holaU',                appUsuario) // de prueba
 //RUTAS LOGIN
 Router.post('/login',                 appLogin)
 //RUTAS USUARIO

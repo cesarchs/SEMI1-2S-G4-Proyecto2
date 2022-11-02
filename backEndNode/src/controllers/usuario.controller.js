@@ -15,7 +15,7 @@ appUsuario.use(bodyParser.json());
 
 /** importar s3 peticiones */
 
-import { subirfotoS3 } from './uploader.controller.js'
+import {holaU, subirfotoS3 } from './uploader.controller.js'
 
 
 import sha256 from 'js-sha256' // libreria para emcriptar 
@@ -43,6 +43,10 @@ appUsuario.get('/holaUsuario', function (req, res ) {
 	res.json({messaje: 'Hola desde controlador usuario'})
 });
 
+appUsuario.get('/holaU', function (req, res ) {
+	holaU(req,res)
+});
+
 
 // REGISTRAR USUARIO
 appUsuario.post('/register',(request, response)=>{
@@ -50,7 +54,8 @@ appUsuario.post('/register',(request, response)=>{
     var fullname = request.body.full_name;
     var email = request.body.email;
     var pwd = request.body.password;
-    var foto = request.body.base64;
+    var foto = request.body.photo;
+    var modoBot = 'DESACTIVADO';
 
     var uniqueId = uuidv4();
 
@@ -58,6 +63,9 @@ appUsuario.post('/register',(request, response)=>{
     var extension = "." +format.split("/")[1];
     var urlPhotoS3 = imageS3+uniqueId+ extension ;
     
+    console.log(format);
+    console.log(extension);
+    console.log(urlPhotoS3);
 
     var hash = sha256(pwd);
 
@@ -67,28 +75,39 @@ appUsuario.post('/register',(request, response)=>{
     "\'"+email+"\' ;" 
     ;
     console.log(miQuery);
+    conn.query("START TRANSACTION;");
     conn.query(miQuery, function(err, result){
         if(err || result[0] != undefined){
             console.log(err);
-            response.status(502).send('Status: UserExists');
+            conn.query("ROLLBACK;");
+            response.status(502).json('Status: UserExists');
         }else{
             
-            var miQuery2 = "insert into USUARIO (user,fullname, email,pwd,photo) VALUES ( " +
-                            "\'"+user+"\' ,"+
+            var miQuery2 = "call insertarUsuario( " +
                             "\'"+fullname+"\' ,"+
+                            "\'"+user+"\' ,"+
                             "\'"+email+"\' ,"+
                             "\'"+hash+"\', " +
-                            "\'"+urlPhotoS3+"\' );"
+                            "\'"+urlPhotoS3+"\' ,"+
+                            "\'"+modoBot+"\');"
                             ;
             console.log(miQuery2);
             conn.query(miQuery2, function(err, result){
                 if(err){
                     console.log(err);
-                    response.status(502).send('Status: false');
+                    conn.query("ROLLBACK;");
+                    response.status(502).json('Status: false');
                 }else{
-                    subirfotoS3(request,uniqueId,format,extension);
-                    console.log(result[0]);
-                    response.status(200).send('Status: true');
+                    try {
+                        subirfotoS33(request,uniqueId,format,extension);
+                        //console.log(result[0]);
+                        response.status(200).json('Status: true');
+                        conn.query("COMMIT;");
+                    } catch (error) {
+                        conn.query("ROLLBACK;");
+                        console.log("fallo al subir la imagen al S3");
+                        response.status(502).json('Status: false');
+                    }
                 }
             });
         }
