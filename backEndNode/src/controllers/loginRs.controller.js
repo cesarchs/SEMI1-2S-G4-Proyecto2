@@ -27,8 +27,8 @@ appLogin.use(function(req, res, next) {
 
 // peticion para log in 
 appLogin.post('/login',(request, response)=>{
-    var user = request.body.user;
-    var pwd = request.body.pwd;
+    var user = request.body.email;
+    var pwd = request.body.password;
 
     var hash = sha256(pwd);
 
@@ -49,6 +49,34 @@ appLogin.post('/login',(request, response)=>{
         }
     }); 
 })
+
+appLogin.post('/loginFacial',(request, response)=>{
+    var user = request.body.email;
+    var photo = request.body.photo;
+
+
+    var miQuery = "SELECT photo FROM USUARIO;" 
+    ;
+    console.log(miQuery);
+    conn.query(miQuery, function(err, result){
+        if(err || result[0] == undefined){
+            console.log(err);
+            response.status(502).json('Status: false');
+        }else{
+            for (let i = 0; i <= result.length; i++) {
+                const element = result[i].photo;
+                console.log(element)
+                response.status(200).send(result[1]);
+            }
+            response.status(200).send(result[1]);
+        }
+    }); 
+})
+
+
+
+
+
 
 
 export default appLogin

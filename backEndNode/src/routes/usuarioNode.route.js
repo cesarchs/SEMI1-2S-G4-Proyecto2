@@ -14,6 +14,7 @@ Router.get('/holaArchivo',          appArchivo) // de prueba
 Router.get('/holaU',                appUsuario) // de prueba
 //RUTAS LOGIN
 Router.post('/login',                 appLogin)
+Router.post('/loginFacial',           appLogin)
 //RUTAS USUARIO
 Router.post('/register',            appUsuario)
 Router.get('/userFiles/:idUser',    appUsuario)
@@ -34,7 +35,7 @@ Router.post('/subirfoto',           appArchivo)
 Router.post('/deleteFilee',           appArchivo)
 
 // pruebas rek
-Router.get('/rek',           app)
+Router.get('/rek',                          app)
 Router.post('/detectarcara',                app)
 Router.post('/detectartexto',               app)
 Router.post('/detectarfamoso',              app)
