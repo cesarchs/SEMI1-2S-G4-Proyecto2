@@ -2,6 +2,10 @@
 import db_credentials from '../db/db_creds.js' //Se importa las credenciales de la base de datos 
 import mysql from 'mysql' // IMPORTAMOS MYSQL
 var conn = mysql.createPool(db_credentials); // CREAMOS UN POOL PARA LAS PETICIONES A LA BASE DE DATOS 
+
+
+
+import {compararfotos } from './rek.controller.js'
 //////////////////////////////////////////////////////////////////////////////////////////////////
 import express from 'express'
 const appLogin = express() // creamos instancia de express para exportar al .router
@@ -63,12 +67,11 @@ appLogin.post('/loginFacial',(request, response)=>{
             console.log(err);
             response.status(502).json('Status: false');
         }else{
-            for (let i = 0; i <= result.length; i++) {
+            for (let i = 0; i < result.length; i++) {
                 const element = result[i].photo;
                 console.log(element)
-                response.status(200).send(result[1]);
             }
-            response.status(200).send(result[1]);
+            compararfotos(request,response);
         }
     }); 
 })

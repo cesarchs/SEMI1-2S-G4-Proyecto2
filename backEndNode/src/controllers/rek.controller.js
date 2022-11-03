@@ -36,13 +36,18 @@ app.post('/detectarcara', function (req, res) {
         Name: "mysourceimage"
       }*/
       Image: { 
-        Bytes: Buffer.from(imagen, 'base64')
+        S3Object: {
+          Bucket: "grupo4proyecto2", 
+          Name: "fotos/6591b142-5c8b-4d85-998f-9669856e6416.jpg"
+        }
       },
       Attributes: ['ALL']
     };
 
     rek.detectFaces(params, function(err, data) {
-      if (err) {res.json({mensaje: "Error"})} 
+      if (err) {
+        console.log(err)
+        res.json({mensaje: "Error"})} 
       else {   
              res.json({Deteccion: data});      
       }
@@ -73,6 +78,9 @@ app.post('/detectarcara', function (req, res) {
   });
 
 
+
+
+
   // Analizar Famoso
   app.post('/detectarfamoso', function (req, res) { 
     var imagen = req.body.imagen;
@@ -96,6 +104,9 @@ app.post('/detectarcara', function (req, res) {
   });
 
   
+
+
+
   // Obtener Etiquetas
   app.post('/detectaretiquetas', function (req, res) { 
     var imagen = req.body.imagen;
@@ -116,6 +127,11 @@ app.post('/detectarcara', function (req, res) {
       }
     });
   });
+
+
+
+
+
   // Comparar Fotos
   app.post('/compararfotos', function (req, res) { 
     var imagen1 = req.body.imagen1;
@@ -139,6 +155,33 @@ app.post('/detectarcara', function (req, res) {
       }
     });
   });
+
+
+
+    //FUNCION Comparar Fotos
+    export function compararfotos (req, res) { 
+      var imagen1 = req.body.imagen1;
+      var imagen2 = req.body.imagen2;
+      var params = {
+        
+        SourceImage: {
+            Bytes: Buffer.from(imagen1, 'base64')     
+        }, 
+        TargetImage: {
+            Bytes: Buffer.from(imagen2, 'base64')    
+        },
+        SimilarityThreshold: '80'
+        
+       
+      };
+      rek.compareFaces(params, function(err, data) {
+        if (err) {res.json({mensaje: err})} 
+        else {   
+               res.json({Comparacion: data.FaceMatches});      
+        }
+      });
+    };
+  
 
 
 

@@ -7,7 +7,7 @@ let aws_keys = {
         //apiVersion: '2006-03-01',
     },
     rekognition: {
-        region: 'us-east-2',
+        region: 'us-east-1',
         accessKeyId: process.env.REK_ACCKEY,
         secretAccessKey: process.env.REK_SACCKEY 
     }
