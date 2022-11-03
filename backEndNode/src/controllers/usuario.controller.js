@@ -99,7 +99,7 @@ appUsuario.post('/register',(request, response)=>{
                     response.status(502).json('Status: false');
                 }else{
                     try {
-                        subirfotoS33(request,uniqueId,format,extension);
+                        subirfotoS3(request,uniqueId,format,extension);
                         //console.log(result[0]);
                         response.status(200).json('Status: true');
                         conn.query("COMMIT;");

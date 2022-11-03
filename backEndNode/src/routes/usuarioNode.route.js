@@ -3,6 +3,7 @@ import express from 'express'
 import appUsuario from '../controllers/usuario.controller.js'
 import appLogin from '../controllers/loginRs.controller.js'
 import appArchivo from '../controllers/archivo.controller.js'
+import app from '../controllers/rek.controller.js'
 
 const Router = express();
 
@@ -31,6 +32,15 @@ Router.get('/allFile',            appArchivo)
 Router.post('/getPhoto',            appArchivo)
 Router.post('/subirfoto',           appArchivo)
 Router.post('/deleteFilee',           appArchivo)
+
+// pruebas rek
+Router.get('/rek',           app)
+Router.post('/detectarcara',                app)
+Router.post('/detectartexto',               app)
+Router.post('/detectarfamoso',              app)
+Router.post('/detectaretiquetas',           app)
+Router.post('/compararfotos',               app)
+
 
 
 export default Router
