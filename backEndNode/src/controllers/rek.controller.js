@@ -151,7 +151,7 @@ app.post('/detectarcara', function (req, res) {
     rek.compareFaces(params, function(err, data) {
       if (err) {res.json({mensaje: err})} 
       else {   
-             res.json({Comparacion: data.FaceMatches});      
+             res.json({Comparacion: data.FaceMatches[0].Similarity});      
       }
     });
   });
@@ -159,26 +159,28 @@ app.post('/detectarcara', function (req, res) {
 
 
     //FUNCION Comparar Fotos
-    export function compararfotos (req, res) { 
-      var imagen1 = req.body.imagen1;
-      var imagen2 = req.body.imagen2;
+    export function compararfotos (element,foto ,result, response) { 
+      var imagen1 = foto;
       var params = {
         
         SourceImage: {
             Bytes: Buffer.from(imagen1, 'base64')     
         }, 
         TargetImage: {
-            Bytes: Buffer.from(imagen2, 'base64')    
+            S3Object: {
+              Bucket: "grupo4proyecto2", 
+              Name: element
+            }    
         },
         SimilarityThreshold: '80'
         
        
       };
       rek.compareFaces(params, function(err, data) {
-        if (err) {res.json({mensaje: err})} 
-        else {   
-               res.json({Comparacion: data.FaceMatches});      
-        }
+        if (err) {response.json("no match")} 
+        else if (data.FaceMatches[0] != undefined){   
+               response.json({result});      
+        }else {response.json("no match")}
       });
     };
   

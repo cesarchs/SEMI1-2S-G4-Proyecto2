@@ -54,24 +54,70 @@ appLogin.post('/login',(request, response)=>{
     }); 
 })
 
+// log in solo con reconocimiento facil
+/*
+// login con recorrido de fotos
 appLogin.post('/loginFacial',(request, response)=>{
     var user = request.body.email;
     var photo = request.body.photo;
 
+    let foto = (photo.split(";base64,")[1]);
+    
+    //Quitar formato de imagen al inicio del archivo base64
 
-    var miQuery = "SELECT photo FROM USUARIO;" 
-    ;
-    console.log(miQuery);
+    var miQuery = "SELECT photo FROM USUARIO;" ;
+
     conn.query(miQuery, function(err, result){
         if(err || result[0] == undefined){
             console.log(err);
             response.status(502).json('Status: false');
         }else{
-            for (let i = 0; i < result.length; i++) {
-                const element = result[i].photo;
-                console.log(element)
+            for (let i = 1; i <= result.length; i++) {
+                const element = ( result[i].photo.split("https://grupo4proyecto2.s3.amazonaws.com/")[1]);
+                if (element != undefined){
+                    if (compararfotos(element,foto,ans)){
+                        console.log(ans)
+                        break;
+                        
+                    }
+                        console.log("false")
+                }
             }
-            compararfotos(request,response);
+        }
+    }); 
+})
+*/
+
+
+
+// login con recorrido de fotos
+appLogin.post('/loginFacial',(request, response)=>{
+    var user = request.body.email;
+    var photo = request.body.photo;
+
+    let foto = (photo.split(";base64,")[1]);
+    
+    //Quitar formato de imagen al inicio del archivo base64
+
+    var miQuery = "SELECT * FROM USUARIO as usu WHERE usu.email = '" + user + "' OR usu.user = '" + user + "';" ;
+    console.log(miQuery);
+    conn.query(miQuery, function(err, result){
+        if(err || result[0].photo == undefined){
+            console.log(err);
+            response.status(502).json('Status: false');
+        }else{
+            const element = ( result[0].photo.split("https://grupo4proyecto2.s3.amazonaws.com/")[1]);
+            let ans = "";
+            if (element != undefined){
+                console.log(element)
+                if (compararfotos(element,foto,result,response)){
+                    console.log(ans)
+                }    
+                else {console.log("esperando resultado")
+                    //response.status(502).json('Status: falseF')
+                }
+            }else {console.log ("tipo imagen no valida") 
+                response.status(502).json('Status: falseT');}
         }
     }); 
 })
