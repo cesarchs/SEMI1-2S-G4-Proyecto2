@@ -12,13 +12,13 @@ import { v4 as uuidv4 } from 'uuid'; // identificador unico
 
 /** importar s3 peticiones */
 
-import {eliminarfotoS3,subirfotoS3, subirArchivoPdf, subirArchivoTxt} from './uploader.controller.js'
+
+import {eliminarfotoS3,subirfotoS3} from './uploader.controller.js'
+import {ObtenerTags } from './rek.controller.js'
 
 /** VARIABLES DE NOMBRE DE TIPO DE ARCHIVOS CARGADOS A S3 */
 
 const imageS3 = "https://grupo4proyecto2.s3.amazonaws.com/fotos/";
-const txtS3 = "https://grupo4proyecto2.s3.amazonaws.com/txt/";
-const pdfS3 = "https://grupo4proyecto2.s3.amazonaws.com/pdf/";
 
 // ########################################################################
 appArchivo.use(bodyParser.json());
@@ -36,21 +36,26 @@ appArchivo.get('/holaArchivo', function (req, res ) {
 
 // CREAR ARCHIVO (SUBIRLO)
 appArchivo.post('/uploadFile',(request, response)=>{
+    let tags = "";
     //RECOGER DATOS
-    var idUsuario = request.body.idUsuario;
-    var tipoArchivo = request.body.tipoArchivo;
-    var file_name = request.body.file_name;
-    var file = request.body.base64;
-    var privado = request.body.private;
-    var pwd = request.body.pwd;
-
-    var hash = sha256(pwd);
+    var idUsuario = request.body.idUser;
+    var file = request.body.photo;
+    var descripcion = request.body.description;
+    
     var uniqueId = uuidv4();
+    
     /**
      * data:image/png;base64,
      * data:text/plain;base64,
      * data:application/pdf;base64,
      */
+    // para etiquetas
+    
+    let foto = (file.split(";base64,")[1]);
+    //ObtenerTags (foto);
+
+
+
     const format = file.substring(file.indexOf('data:')+5, file.indexOf(';base64'));
     var extension = "." +format.split("/")[1];
 
@@ -59,62 +64,37 @@ appArchivo.post('/uploadFile',(request, response)=>{
    
     
     var urlS3;
-    
-    var miQuery = "SELECT * FROM USUARIO " +
-    'WHERE ( idUsuario = ' + "\'"+idUsuario+"\' "+ 
-    'AND pwd = '+"\'"+hash+"\' ); " 
-    ;
+    urlS3 = imageS3 + uniqueId+ extension;
+    console.log(urlS3);
+
+    // ORDEN DE LOS DATOS EN EL PROCEDURE ->  DESCRIPCION, PUBLICO, ID USER, FECHA, ETIQUETAS, URL
+    var miQuery = "CALL insertarPublicaciones( '" + descripcion + "', 1 ,"+ idUsuario + ", NOW() , '" + tags + "' , '" + urlS3 + "');" ;
+
     console.log(miQuery);
     conn.query(miQuery, function(err, result){
-        if(err || result[0] == undefined ){
+        if(err){
             console.log(err );
-            response.status(502).send('Status: bad pwd');
-
-        }else if (tipoArchivo =="img"){
-            urlS3 = imageS3 + uniqueId+ extension  ;
-            console.log(urlS3);
-        
-        }else if (tipoArchivo =="pdf"){
-            urlS3 = pdfS3 + uniqueId+ extension  ;
-            console.log(urlS3);
-        
-        }else if(tipoArchivo =="txt"){
-            urlS3 = txtS3 + uniqueId+ extension  ;
-            console.log(urlS3);
-        
+            response.status(502).json('false');
         }else{
-            console.log("mandar error de tipo de archivo");
-            return response.status(502).json('tipo de archivo no aceptado');
-        }
-
-        var miQuery2 = "INSERT INTO ARCHIVO(file_name, tipoArchivo, propietario, private, URL, FechaCreacion, FechaModificacion) " +
-        'VALUES( ' + "\'"+file_name+"\' "+ 
-        ", \'"+tipoArchivo+"\' "  + 
-        ", "+idUsuario + 
-        ", "+privado + 
-        ", \'"+urlS3+"\' , DATE_SUB(now(), INTERVAL 6 HOUR), "+
-        "DATE_SUB(now(), INTERVAL 6 HOUR));"
-        ;
-        console.log(miQuery2);
-        conn.query(miQuery2, function(err, result){
-            if(err){
-                console.log(err);
-                response.status(502).json('Status: false');
-            }else if (tipoArchivo =="img"){
+            try {
+                console.log("subiendo Foto")
                 subirfotoS3(request, uniqueId, format, extension)
-                console.log(result[0]);
-                response.status(200).json('Status: true');
-                
-            }else if (tipoArchivo =="pdf"){
-                subirArchivoPdf(request, uniqueId, format, extension)
-                console.log(result[0]);
-                response.status(200).json('Status: true');
-            }else {
-                subirArchivoTxt(request, uniqueId, format, extension)
-                console.log(result[0]);
-                response.status(200).json('Status: true');
+                var miQuery = "select max(idPublicacion) as idM from Publicaciones;"
+                conn.query(miQuery, function(err, result){
+                    if(err){
+                        console.log(err );
+                        response.status(502).json('false');
+                    }else{
+                        console.log(result[0].idM)
+                        ObtenerTags (foto,result[0].idM);
+                        response.status(200).json('Status: true');
+                    }
+                });   
+            } catch (error) {
+                response.status(502).json('no foto');
             }
-        });
+            
+        }
     });   
 })
 

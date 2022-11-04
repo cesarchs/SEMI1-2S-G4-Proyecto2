@@ -1,4 +1,10 @@
-//////////////// IMPORTAMOS CREDENCIALES DE BASE DE DATOS Y S3 ///////////////////////////////////////
+//////////////// IMPORTAMOS CREDENCIALES DE BASE DE DATOS ///////////////////////////////////////
+import db_credentials from '../db/db_creds.js' //Se importa las credenciales de la base de datos 
+import mysql from 'mysql' // IMPORTAMOS MYSQL
+var conn = mysql.createPool(db_credentials); // CREAMOS UN POOL PARA LAS PETICIONES A LA BASE DE DATOS 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////// IMPORTAMOS CREDENCIALES DE BASE DE DATOS Y S3, rek ///////////////////////////////////////
 import AWS from 'aws-sdk'
 import aws_keys from '../db/creds_template.js' // se importa las credenciales para conectarnos a S3, credenciales del usuario IAM
 const s3 = new AWS.S3(aws_keys.s3);  //--------> Alamacenamiento S3
@@ -110,6 +116,7 @@ app.post('/detectarcara', function (req, res) {
   // Obtener Etiquetas
   app.post('/detectaretiquetas', function (req, res) { 
     var imagen = req.body.imagen;
+    let tags = "";
     var params = {
       /* S3Object: {
         Bucket: "mybucket", 
@@ -118,15 +125,79 @@ app.post('/detectarcara', function (req, res) {
       Image: { 
         Bytes: Buffer.from(imagen, 'base64')
       }, 
-      MaxLabels: 123
+      MaxLabels: 3
     };
     rek.detectLabels(params, function(err, data) {
       if (err) {res.json({mensaje: "Error"})} 
-      else {   
-             res.json({texto: data.Labels});      
+      else {
+        for (let i = 0; i < data.Labels.length; i++) {
+          const element = data.Labels[i].Name;
+          if (i==0){
+            tags = element
+          }else tags += ","+element
+        } 
+        console.log(tags)
+             res.json({texto: tags});      
       }
     });
   });
+
+
+
+
+
+
+
+
+  // FUNCION Obtener Etiquetas
+export function ObtenerTags (imagen, id) { 
+  
+  var imagen = imagen;
+  let tags = "";
+  var params = {
+    /* S3Object: {
+      Bucket: "mybucket", 
+      Name: "mysourceimage"
+    }*/
+    Image: { 
+      Bytes: Buffer.from(imagen, 'base64')
+    }, 
+    MaxLabels: 3
+  };
+  rek.detectLabels(params, function(err, data) {
+    if (err) {console.log("error al ingresar tags")} 
+    else {
+      for (let i = 0; i < data.Labels.length; i++) {
+        const element = data.Labels[i].Name;
+        if (i==0){
+          tags = element
+        }else tags += ","+element
+      } 
+        if(tags != ""){
+          var miQuery = "UPDATE Publicaciones SET etiqueta = '"+ tags +"' WHERE idPublicacion =" + id +";"
+          conn.query(miQuery, function(err, result){
+            if(err){
+              console.log(err );
+              //response.status(502).json('false');
+              console.log("actualizado")
+          }else{
+            console.log("se actualizo los tags")
+
+          }
+          });
+        }else{console.log("tags vacios")}
+      
+
+      //console.log("llego al tagsss")
+      //console.log(tags)
+      //     res.json({texto: tags});
+      //return tags;    
+    }
+  });
+};
+
+
+
 
 
 
