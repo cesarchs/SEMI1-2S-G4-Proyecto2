@@ -125,7 +125,6 @@ appUsuario.get('/userFiles/:idUsuario',(request, response)=>{
     var miQuery = "CALL misPublicaciones( " + idUser +");"
     ;
     console.log(miQuery);
-    let ans;
     conn.query(miQuery, function(err, result){
         if(err){
             console.log(err);
@@ -139,21 +138,9 @@ appUsuario.get('/userFiles/:idUsuario',(request, response)=>{
 
 // ARCHIVOS PUBLICOS DE USUARIOS AMIGO
 
-appUsuario.get('/friendFiles/:idUser',(request, response)=>{
-    var idUser = request.params.idUser;
-    var miQuery = "SELECT aux.idArchivo, aux.tipoArchivo, aux.URL , aux.file_name, aux.user, date_format(aux.FechaModificacion, '%d/%m/%Y') AS FechaModificacion " +
-    "FROM ( "+
-        "SELECT a.idArchivo, a.tipoArchivo, a.URL , u.idUsuario, a.file_name, u.user, a.FechaModificacion "+
-        "FROM USUARIO u "+
-        "INNER JOIN ARCHIVO a ON u.idUsuario = a.propietario "+
-        "WHERE a.private = 0 AND u.idUsuario <> " + idUser +
-        ") aux "+
-    "INNER JOIN( "+
-            "(SELECT usuario2 as idUsuario FROM AMIGO where usuario1 = "+ idUser +" ) "+
-            "UNION "+
-            "(SELECT usuario1 as idUsuario FROM AMIGO where usuario2 = "+ idUser +" ) "+
-        ")aux1 ON aux.idUsuario = aux1.idUsuario "+
-    "ORDER BY aux.user ASC; "
+appUsuario.get('/friendFiles/:idUsuario',(request, response)=>{
+    var idUser = request.params.idUsuario;
+    var miQuery = "CALL PublicacionesAmigos( "+ idUser +" );"
     ;
 
     console.log(miQuery);
@@ -161,28 +148,28 @@ appUsuario.get('/friendFiles/:idUser',(request, response)=>{
     conn.query(miQuery, function(err, result){
         if(err || result[0] == undefined){
             console.log(err);
-            response.status(200).json([]); //se cambio ya no retorna un error por que asi lo controlan en el front
+            response.status(502).json([]); //se cambio ya no retorna un error por que asi lo controlan en el front
         }else{
-            console.log(result);
-            response.status(200).send(result);
+            console.log(result[0]);
+            response.status(200).json(result[0]);
         }
     }); 
 })
 
-// TODOS LOS USUARIOS 
+// TODOS LOS USUARIOS QUE PUEDO AGREGAR COMO AMIGOS
 
-appUsuario.get('/allUsers/:idUser',(request, response)=>{
-    var idUser = request.params.idUser;
-    var miQuery = "CALL NuevosAmigos( "+ idUser + " );"
+appUsuario.get('/allUsers/:idUsuario',(request, response)=>{
+    var idUser = request.params.idUsuario;
+    var miQuery = "CALL agregarAmigos( "+ idUser + " );"
     ;
     console.log(miQuery);
     conn.query(miQuery, function(err, result){
         if(err){
             console.log(err);
-            response.status(502).send('Status: false');
+            response.status(502).json('Status: false');
         }else {
-            console.log(result);
-            response.status(200).send(result[0]);
+            console.log(result[0]);
+            response.status(200).json(result[0]);
         }
     }); 
 })
@@ -195,7 +182,7 @@ appUsuario.post('/addFriend',(request, response)=>{
     var id_friend = request.body.id_friend;
 
 
-    var miQuery = "INSERT INTO AMIGO VALUES( " +
+    var miQuery = "INSERT INTO Amigos VALUES( " +
     id_user+", "+
     id_friend+", "+
     "DATE_SUB(now(), INTERVAL 6 HOUR));"

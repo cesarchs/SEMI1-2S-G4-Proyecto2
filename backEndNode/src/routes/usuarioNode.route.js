@@ -15,22 +15,23 @@ Router.get('/holaArchivo',          appArchivo) // de prueba
 Router.get('/holaU',                appUsuario) // de prueba
 
 
+
 //RUTAS LOGIN
 Router.post('/login',                 appLogin) //yap
 Router.post('/loginFacial',           appLogin) // yap
 
 //RUTAS USUARIO
-Router.post('/register',            appUsuario) // yap
-Router.get('/userFiles/:idUsuario',    appUsuario) // yap
-Router.get('/friendFiles/:idUser',  appUsuario)
-Router.get('/allUsers/:idUser',     appUsuario) 
-Router.post('/addFriend',           appUsuario)
-Router.get('/myFriends/:idUser',    appUsuario)
+Router.post('/register',                appUsuario) // yap
+Router.get('/userFiles/:idUsuario',     appUsuario) // yap
+Router.get('/friendFiles/:idUsuario',      appUsuario) // YAP
+Router.get('/allUsers/:idUsuario',         appUsuario)  // YAP, personas a agregar
+Router.post('/addFriend',               appUsuario)
+Router.get('/myFriends/:idUser',        appUsuario)
 
 //RUTAS ARCHIVO
-Router.post('/uploadFile',          appArchivo) // yap
-Router.post('/deleteFile',          appArchivo)
-Router.post('/editFile',            appArchivo)
+Router.post('/uploadFile',              appArchivo) // yap
+Router.post('/deleteFile',              appArchivo)
+Router.post('/editFile',                appArchivo)
 
 
 
@@ -54,9 +55,9 @@ Router.post('/compararfotos',               app)
 
 
 // PRUBAS RUTAS COGNITO 
-Router.post('/api/login',                 appLogin2) 
-Router.post('/signup',                 appLogin2) 
-Router.get('/COG',                 appLogin2) 
+Router.post('/api/login',               appLogin2) 
+Router.post('/signup',                  appLogin2) 
+Router.get('/COG',                      appLogin2) 
 
 
 export default Router
