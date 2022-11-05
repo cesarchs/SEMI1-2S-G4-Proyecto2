@@ -2,6 +2,9 @@ import React from "react";
 import { useEffect, useState } from 'react';
 
 export function Post({id, image, description}){
+
+
+
     return(
         <div className="col-md-4 mb-4">
             <div className="card shadow border-0 bg-dark text-light">
