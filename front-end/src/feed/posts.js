@@ -7,6 +7,7 @@ export function Posts(){
 
     const [tabIndex, setTabIndex] = useState(2);
     const [posts, setPosts] = useState();
+    const [frindPost, setFrindPost] = useState();
 
     useEffect(() => {
         const reqOps = {
@@ -14,6 +15,11 @@ export function Posts(){
             headers: { 'Content-Type': 'application/json' }
         };
         fetch(`http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}/userFiles/${localStorage.getItem("idUsuario")}`, reqOps)
+        .then(res => res.json())
+        .then(data => {
+            setPosts(data)
+        });
+        fetch(`http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}/friendFiles/${localStorage.getItem("idUsuario")}`, reqOps)
         .then(res => res.json())
         .then(data => {
             setPosts(data)

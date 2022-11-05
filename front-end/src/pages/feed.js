@@ -32,7 +32,11 @@ export function Feed(){
                             <li className={tabIndex===4?"list-group-item bg-dark":"list-group-item"} 
                                 onClick={()=>setTabIndex(4)}>Perfil</li>
                             <li className={tabIndex===5?"list-group-item bg-dark":"list-group-item"} 
-                                onClick={()=>setTabIndex(4)}>Cerrar Sesión</li>
+                                onClick={()=>{
+                                    localStorage.clear();
+                                    window.location.href = "./";
+                                    setTabIndex(4);
+                                }}>Cerrar Sesión</li>
                         </ul>
                     </div>
                 </div>
