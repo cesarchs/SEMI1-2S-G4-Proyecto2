@@ -72,7 +72,7 @@ appUsuario.post('/register',(request, response)=>{
 
 
     /**SELECT idUsuario FROM USUARIO WHERE user ='CARCACHO@gmail.com' or email = 'CARCACHO@gmail.com'; */
-    var miQuery = "SELECT idUsuario FROM USUARIO WHERE user ='" + user+"' " + "or email = '"+email+"' ;" ;
+    var miQuery = "SELECT idUsuario FROM USUARIO WHERE user ='" + user+"';" ;
     console.log(miQuery);
     //conn.query("START TRANSACTION;");
     conn.query(miQuery, function(err, result){

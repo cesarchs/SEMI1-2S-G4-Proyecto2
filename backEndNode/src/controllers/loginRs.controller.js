@@ -6,6 +6,7 @@ var conn = mysql.createPool(db_credentials); // CREAMOS UN POOL PARA LAS PETICIO
 
 
 import {compararfotos } from './rek.controller.js'
+import {loginCognito} from './cognito.controller.js'
 //////////////////////////////////////////////////////////////////////////////////////////////////
 import express from 'express'
 const appLogin = express() // creamos instancia de express para exportar al .router
@@ -38,9 +39,7 @@ appLogin.post('/login',(request, response)=>{
 
     var miQuery = "SELECT * FROM USUARIO " +
     'WHERE ( user = ' + "\'"+user+"\' "+ 
-    'AND pwd = '+"\'"+hash+"\' ) " +
-    'OR ( email = ' + "\'"+user+"\' "+ 
-    'AND pwd = '+"\'"+hash+"\' ) "
+    'AND pwd = '+"\'"+hash+"\' ) ;" 
     ;
     console.log(miQuery);
     conn.query(miQuery, function(err, result){
@@ -48,11 +47,53 @@ appLogin.post('/login',(request, response)=>{
             console.log(err);
             response.status(502).send('Status: false');
         }else{
-            console.log(result[0]);
-            response.status(200).send(result[0]);
+            try {
+                loginCognito(user,pwd,result,response);
+                
+            } catch (error) {
+                response.status(502).send('Status: false');
+            }
         }
     }); 
 })
+
+
+/**
+ *   // FALLA DE LOG IN CON ASINCROMISMO
+ * appLogin.post('/login', async (request, response)=>{
+    var user = request.body.email;
+    var pwd = request.body.password;
+
+    var hash = sha256(pwd);
+
+    await loginCognito(user,pwd).then(m => {
+
+        if (m) {
+            console.log("ya llego")
+            var miQuery = "SELECT * FROM USUARIO " +
+            'WHERE ( user = ' + "\'"+user+"\' "+ 
+            'AND pwd = '+"\'"+hash+"\' ) ;" 
+            ;
+            console.log(miQuery);
+            conn.query(miQuery, function(err, result){
+                if(err || result[0] == undefined){
+                    console.log(err);
+                    response.status(502).send('Status: false');
+                }else{
+                    console.log(result[0]);
+                    response.status(200).send(result[0]);
+                }
+            }); 
+          // es true que es lo que va a realizar
+        }
+        else {
+          // de ser falso que es lo que realiza
+          console.log("nunca llego :'(")
+        }
+      
+      });
+})
+ */
 
 // log in solo con reconocimiento facil
 /*
