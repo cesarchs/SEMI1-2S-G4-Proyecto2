@@ -181,21 +181,18 @@ appUsuario.post('/addFriend',(request, response)=>{
     var id_user = request.body.id_user;
     var id_friend = request.body.id_friend;
 
-
-    var miQuery = "INSERT INTO Amigos VALUES( " +
-    id_user+", "+
-    id_friend+", "+
-    "DATE_SUB(now(), INTERVAL 6 HOUR));"
-    ;
+//call MandarSolicitud(2,1);
+    var miQuery = "call MandarSolicitud( " + id_user+ "," + id_friend +");";
     console.log(miQuery);
 
     conn.query(miQuery, function(err, result){
         if(err){
-            console.log(err);
-            response.status(502).send('Status: false');
+            //console.log(err);
+            console.log("no se pudo agregar amigo");
+            response.status(502).json('Status: false');
         }else{
             console.log(result[0]);
-            response.status(200).send('Status: true');
+            response.status(200).json('Status: true');
         }
     }); 
 })
