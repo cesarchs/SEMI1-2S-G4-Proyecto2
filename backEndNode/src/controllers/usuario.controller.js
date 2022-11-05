@@ -17,6 +17,8 @@ appUsuario.use(bodyParser.json());
 
 import {holaU, subirfotoS3 } from './uploader.controller.js'
 
+//IMPORTAR FUNCIONES PARA COGNITO
+import {registroCognito} from './cognito.controller.js'
 
 import sha256 from 'js-sha256' // libreria para emcriptar 
 
@@ -63,26 +65,23 @@ appUsuario.post('/register',(request, response)=>{
     var extension = "." +format.split("/")[1];
     var urlPhotoS3 = imageS3+uniqueId+ extension ;
     
-    console.log(format);
-    console.log(extension);
-    console.log(urlPhotoS3);
-
+    //console.log(format);
+    //console.log(extension);
+    //console.log(urlPhotoS3);
     var hash = sha256(pwd);
 
-    var miQuery = "SELECT * FROM USUARIO WHERE USUARIO.user = " +
-    "\'"+user+"\' " +
-    "or USUARIO.email = "+
-    "\'"+email+"\' ;" 
-    ;
+
+    /**SELECT idUsuario FROM USUARIO WHERE user ='CARCACHO@gmail.com' or email = 'CARCACHO@gmail.com'; */
+    var miQuery = "SELECT idUsuario FROM USUARIO WHERE user ='" + user+"' " + "or email = '"+email+"' ;" ;
     console.log(miQuery);
-    conn.query("START TRANSACTION;");
+    //conn.query("START TRANSACTION;");
     conn.query(miQuery, function(err, result){
+        console.log (result[0]);
         if(err || result[0] != undefined){
             console.log(err);
-            conn.query("ROLLBACK;");
+            //conn.query("ROLLBACK;");
             response.status(502).json('Status: UserExists');
         }else{
-            
             var miQuery2 = "call insertarUsuario( " +
                             "\'"+fullname+"\' ,"+
                             "\'"+user+"\' ,"+
@@ -95,16 +94,20 @@ appUsuario.post('/register',(request, response)=>{
             conn.query(miQuery2, function(err, result){
                 if(err){
                     console.log(err);
-                    conn.query("ROLLBACK;");
+                    console.log("error, no se inserto a base de datos");
+                    //conn.query("ROLLBACK;");
                     response.status(502).json('Status: false');
                 }else{
                     try {
+                        console.log("registrando en cognito");
+                        registroCognito (fullname,user,email,pwd);
+                        console.log("subiendo imagen a S3");
                         subirfotoS3(request,uniqueId,format,extension);
-                        //console.log(result[0]);
+                        console.log(result[0]);
                         response.status(200).json('Status: true');
-                        conn.query("COMMIT;");
+                        //conn.query("COMMIT;");
                     } catch (error) {
-                        conn.query("ROLLBACK;");
+                        //conn.query("ROLLBACK;");
                         console.log("fallo al subir la imagen al S3");
                         response.status(502).json('Status: false');
                     }

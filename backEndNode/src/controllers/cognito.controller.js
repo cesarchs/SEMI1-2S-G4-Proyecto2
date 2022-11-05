@@ -25,12 +25,12 @@ appLogin2.use(function(req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
    next();
   });
-/*
-const registroCognito = async (fullname,user,email,pass) => {
+
+  export const registroCognito = async (fullname,user,email,pwd) => {
   
     var attributelist = [];
     var dataname = {
-        Name: 'fullname',
+        Name: 'name',
         Value: fullname,
     };
     var attributename = new AmazonCognitoIdentity.CognitoUserAttribute(dataname);
@@ -44,19 +44,23 @@ const registroCognito = async (fullname,user,email,pass) => {
     var attributeemail = new AmazonCognitoIdentity.CognitoUserAttribute(dataemail);
   
     attributelist.push(attributeemail);
+    
+    var pwd2 = pwd;
+    var hash = sha256(pwd2);
+    console.log(attributelist);
   
-    const encryptedPasword = crypto.createHash('sha256').update(pass).setEncoding('utf-8').digest('hex');
-  
-    await cognito.signUp(user, hash + "D**", attributelist, null, async (err, data) => {
+    cognito.signUp(user, hash , attributelist, null, async (err, data) => {
         if (err) {
+            console.log("no se registro");
            return false
         }
         
     });
+    console.log("SI se registro");
     return true
   }
   
-  
+  /*
   // dentro de lo que mandan a llamar al registrar mandar a llamar
   await registroCognito(fullname,user,email,pass).then(async(cog)=> {
   
@@ -69,7 +73,10 @@ const registroCognito = async (fullname,user,email,pass) => {
   
   });
 
+
 */
+
+
 appLogin2.get('/COG', function (req, res ) {
     console.log ("confirmacion de peticion a cognito");
 	res.status(200).json([]);
