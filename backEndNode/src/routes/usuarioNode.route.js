@@ -4,6 +4,7 @@ import appUsuario from '../controllers/usuario.controller.js'
 import appLogin from '../controllers/loginRs.controller.js'
 import appArchivo from '../controllers/archivo.controller.js'
 import app from '../controllers/rek.controller.js'
+import appLogin2 from '../controllers/cognito.controller.js'
 
 const Router = express();
 
@@ -51,6 +52,11 @@ Router.post('/detectarfamoso',              app)
 Router.post('/detectaretiquetas',           app)
 Router.post('/compararfotos',               app)
 
+
+// PRUBAS RUTAS COGNITO 
+Router.post('/api/login',                 appLogin2) 
+Router.post('/signup',                 appLogin2) 
+Router.get('/COG',                 appLogin2) 
 
 
 export default Router

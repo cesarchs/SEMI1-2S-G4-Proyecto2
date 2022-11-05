@@ -10,6 +10,10 @@ let aws_keys = {
         region: 'us-east-1',
         accessKeyId: process.env.REK_ACCKEY,
         secretAccessKey: process.env.REK_SACCKEY 
+    },
+    cognito:{
+        UserPoolId: process.env.COG_USER,
+        ClientId: process.env.COG_CLIENT
     }
 }
 export default aws_keys
