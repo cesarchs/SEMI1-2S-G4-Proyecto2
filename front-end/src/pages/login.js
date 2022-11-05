@@ -10,6 +10,7 @@ export function Login(){
     //FORM DATA
     const [formData, setFormData] = useState({
         email:"",
+        email2:"",
         password: ""
     });
 
@@ -28,34 +29,47 @@ export function Login(){
         setImgSrc(imageSrc);
       }, [webcamRef, setImgSrc]);
 
-    const submitCredentials = (evt) => {
-        console.log(formData);
-        // useEffect(() => {    
-        //     const reqOps = {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' }
-        //         body: JSON.stringify(formData)
-        //     };
-            
-        //     fetch(`http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}/api/desarrollo`, reqOps)
-        //     .then(res => res.json())
-        //     .then(data => setData(data));
-        // }, []);
-    };
+    async function submitCredentials(){
+        const reqOps = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        };
+        
+        const response = await fetch(`http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}/login`, reqOps);
+        const data = await response.json().then( res => {
+            localStorage.setItem("idUsuario", res.idUsuario);
+            localStorage.setItem("fullname", res.fullname);
+            localStorage.setItem("user", res.user);
+            localStorage.setItem("email", res.email);
+            localStorage.setItem("photo", res.photo);
+            localStorage.setItem("modoBot", res.modoBot);
+            window.location.href = "./feed";
+        });
+    }
 
-    const submitFace = (evt) =>{
-        console.log(imgSrc)
-        // useEffect(() => {    
-        //     const reqOps = {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' }
-        //         body: JSON.stringify(obj)
-        //     };
-            
-        //     fetch(`http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}/api/desarrollo`, reqOps)
-        //     .then(res => res.json())
-        //     .then(data => setData(data));
-        // }, []);
+    async function submitFace(){
+        let obj = {
+            email: formData.email2,
+            photo: imgSrc
+        }
+        const reqOps = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(obj)
+        };
+        const response = await fetch(`http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}/loginFacial`, reqOps);
+        const data = await response.json().then( res => {
+            if(res !== undefined){
+                localStorage.setItem("idUsuario", res.result[0].idUsuario);
+                localStorage.setItem("fullname", res.result[0].fullname);
+                localStorage.setItem("user", res.result[0].user);
+                localStorage.setItem("email", res.result[0].email);
+                localStorage.setItem("photo", res.result[0].photo);
+                localStorage.setItem("modoBot", res.result[0].modoBot);
+                window.location.href = "./feed"
+            }
+        });
     }
     
     return(
@@ -84,7 +98,7 @@ export function Login(){
                                         onChange={handleChange} 
                                         type="text" 
                                         className="form-control" 
-                                        placeholder="Correo Electrónico"
+                                        placeholder="Nombre de Usuario"
                                         required />
                                 </div>
                                 <div className="form-group mt-3">
@@ -106,6 +120,15 @@ export function Login(){
                         {
                             tabIndex === 2 && 
                             <div className="form-group mt-2">
+                                <div className="form-group mt-3 mb-3">
+                                    <input name="email2" 
+                                        value={formData.email2} 
+                                        onChange={handleChange} 
+                                        type="text" 
+                                        className="form-control" 
+                                        placeholder="Nombre de Usuario"
+                                        required />
+                                </div>
                                 <Webcam width="100%" audio={false} ref={webcamRef} screenshotFormat={"image/jpeg"}/>
                                 <button className="btn btn-dark mb-2" style={{width:"100%"}} onClick={capture}>Capturar Foto</button>
                             </div>

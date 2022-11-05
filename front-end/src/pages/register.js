@@ -54,7 +54,7 @@ export function Register(){
       }, [webcamRef, setImgSrc]);
     
     //SUBMIT HANDLER
-    const handleSubmit = (evt) => {
+    async function handleSubmit (evt){
         let obj = {
             full_name: formData.full_name,
             user: formData.user,
@@ -63,23 +63,23 @@ export function Register(){
             password2: formData.password2,
             photo: imgSrc
         }
-        if(Object.values(obj).indexOf("") > -1){
-            alert("Hacen falta campos!")
-        }else{
-            console.log(obj)
-            // useEffect(() => {    
-            //     const reqOps = {
-            //         method: 'POST',
-            //         headers: { 'Content-Type': 'application/json' }
-            //         body: JSON.stringify(obj)
-            //     };
-                
-            //     fetch(`http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}/api/desarrollo`, reqOps)
-            //     .then(res => res.json())
-            //     .then(data => setData(data));
-            // }, []);
-        }
+        const reqOps = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(obj)
+        };
+        
+        const response = await fetch(`http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}/register`, reqOps);
+        const data = await response.json().then( res => {
+            if(res.status === 200){
+                alert("Usuario registrado con éxito!")
+                window.location.href = "./login"
+            }else{
+                alert("Error en la creación del usuario!")
+            }
+        });
     }
+
 
     return(
         <div className="container text-light">

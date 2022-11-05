@@ -1,0 +1,17 @@
+version: '3.3'
+services:
+  proyecto2:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: 'proyecto2'
+      MYSQL_USER: 'semi1p2'
+      MYSQL_PASSWORD: 'semi1p2'
+      MYSQL_ROOT_PASSWORD: 'semi1p2'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - my-db:/var/lib/mysql
+volumes:
+  my-db:
