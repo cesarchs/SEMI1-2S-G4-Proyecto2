@@ -1,0 +1,13 @@
+call insertarUsuario('minerva7 suarez','mine7', 'minerva7@gmail.com', "1234", 'PHOTOMINERVA7','DESACTIVADO');
+
+CALL agregarAmigos(2); -- id del usuario logueado
+
+CALL solicitudesAceptadasRechazadasPendientes(2,2); 
+-- DONDE EL SEGUNDO VALOR ES EL ESTADO  DE LA SOLICITUD DONDE : 1 ES ACEpTAR , EL ESTADO 2 ES RECHAZAR , EL ESTADO 3 ES pENDIENTE
+
+CALL insertarPublicaciones("Esto es una nueva descripcion",1,7,NOW(),"ETIQUETA ApI REKOGNITION","URL_pUBLICACION1");
+
+CALL PublicacionesAmigos(2);  id del usuario logueado para ver publicaciones de amigos
+
+CALL misPublicaciones(2); -- ver mis publicaciones
+
