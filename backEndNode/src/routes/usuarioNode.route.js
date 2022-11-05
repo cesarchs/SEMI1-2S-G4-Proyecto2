@@ -24,9 +24,9 @@ Router.post('/loginFacial',           appLogin) // yap
 Router.post('/register',                appUsuario) // yap
 Router.get('/userFiles/:idUsuario',     appUsuario) // yap
 Router.get('/friendFiles/:idUsuario',      appUsuario) // YAP
-Router.get('/allUsers/:idUsuario',         appUsuario)  // YAP, personas a agregar
+Router.get('/allUsers/:idUsuario',         appUsuario)  // YAP, personas a poder agregar agregar
 Router.post('/addFriend',               appUsuario)
-Router.get('/myFriends/:idUser',        appUsuario)
+Router.get('/myFriends/:idUsuario',        appUsuario) // mis amigos y estado en el que se ecuentran
 
 //RUTAS ARCHIVO
 Router.post('/uploadFile',              appArchivo) // yap

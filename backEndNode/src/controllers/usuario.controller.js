@@ -201,18 +201,18 @@ appUsuario.post('/addFriend',(request, response)=>{
 })
 
 
-appUsuario.get('/myFriends/:idUser',(request, response)=>{
-    var idUser = request.params.idUser;
-    var miQuery = "CALL MisAmigos( "+ idUser + ");"
+appUsuario.get('/myFriends/:idUsuario',(request, response)=>{
+    var idMIUsuario = request.params.idUsuario;
+    var miQuery = "CALL MisAmigos( "+ idMIUsuario + ");"
     ;
     console.log(miQuery);
     conn.query(miQuery, function(err, result){
         if(err){
             console.log(err);
-            response.status(502).send('Status: false');
+            response.status(502).json('Status: false');
         }else {
             console.log(result);
-            response.status(200).send(result[0]);
+            response.status(200).json(result[0]);
         }
     }); 
 })
