@@ -1,16 +1,11 @@
 // Conexion con Cognito
-//const AmazonCognitoIdentity = require('amazon-cognito-identity-js');//<------Cognito npm i amazon-cognito-identity-js
-
-
 // cognito
 import aws_keys from '../db/creds_template.js'
-import AmazonCognitoIdentity from 'amazon-cognito-identity-js'
+import AmazonCognitoIdentity from 'amazon-cognito-identity-js' //<------Cognito npm i amazon-cognito-identity-js
 const cognito = new AmazonCognitoIdentity.CognitoUserPool(aws_keys.cognito);
 // contrasenias
 import sha256 from 'js-sha256' // libreria para emcriptar 
 
-import crypto from 'crypto'
-//var crypto = require('crypto');
 // DEPENDECIAS PARA PETICIONES 
 import express from 'express'
 const appLogin2 = express() // creamos instancia de express para exportar al .router
@@ -113,6 +108,7 @@ appLogin2.post("/api/login", async (req, res) => {
       },
       onFailure: function (err) {
         // User authentication was not successful
+        console.log("No sos vos")
         res.json(err);
       },
       mfaRequired: function (codeDeliveryDetails) {
@@ -123,6 +119,51 @@ appLogin2.post("/api/login", async (req, res) => {
     });
   });
 //
+
+
+
+
+// FUNCION PARA LOGIN CON CONGNITO
+export const loginCognito = async (user, pwd ,result2 ,response) => {
+   
+    var pwd2 = pwd;
+    var hash = sha256(pwd2);
+
+    var authenticationData = {
+      Username: user,
+      Password: hash 
+    };
+    var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(
+      authenticationData
+    );
+    var userData = {
+      Username: user,
+      Pool: cognito,
+    };
+    var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+    cognitoUser.setAuthenticationFlowType('USER_PASSWORD_AUTH');
+  
+    cognitoUser.authenticateUser(authenticationDetails, {
+      onSuccess: function (result) {
+        // User authentication was successful
+        console.log("si sos vos")
+        console.log(result2[0]);
+        response.status(200).send(result2[0]);
+        //res.json(result); 
+      },
+      onFailure: function (err) {
+        // User authentication was not successful
+        console.log("No sos vos")
+        response.status(502).send('Status: false');
+        //res.json(err);
+      },
+      mfaRequired: function (codeDeliveryDetails) {
+        // MFA is required to complete user authentication.
+        // Get the code from user and call
+        cognitoUser.sendMFACode(verificationCode, this);
+      },
+    });
+  };
 
 
 
