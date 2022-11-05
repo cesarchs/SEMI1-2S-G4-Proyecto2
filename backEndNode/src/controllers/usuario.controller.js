@@ -117,19 +117,19 @@ appUsuario.post('/register',(request, response)=>{
 
 // ARCHIVOS DE MI USUARIO, O ARCHIVOS SEGUN ID
 
-appUsuario.get('/userFiles/:idUser',(request, response)=>{
-    var idUser = request.params.idUser;
-    var miQuery = "SELECT idArchivo, tipoArchivo, file_name, private, URL, date_format(FechaCreacion, '%d/%m/%Y') as FechaCreada , date_format(FechaModificacion, '%d/%m/%Y') as FechaModificacion " +
-    "FROM ARCHIVO WHERE propietario = '" +idUser+"'"+" ORDER BY private ASC;"
+appUsuario.get('/userFiles/:idUsuario',(request, response)=>{
+    var idUser = request.params.idUsuario;
+    var miQuery = "CALL misPublicaciones( " + idUser +");"
     ;
     console.log(miQuery);
+    let ans;
     conn.query(miQuery, function(err, result){
-        if(err || result[0] == undefined){
+        if(err){
             console.log(err);
-            response.status(200).json([]);//se cambio ya no retorna un error por que asi lo controlan en el front (bugfix)
+            response.status(502).json([]);//se cambio ya no retorna un error por que asi lo controlan en el front (bugfix)
         }else{
-            console.log(result);
-            response.status(200).send(result);
+            console.log(result[0]);
+            response.status(200).json(result[0]);
         }
     }); 
 })
