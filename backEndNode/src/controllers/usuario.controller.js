@@ -214,5 +214,52 @@ appUsuario.get('/myFriends/:idUsuario',(request, response)=>{
     }); 
 })
 
+// aceptar amigo
+appUsuario.post('/aceptFriend',(request, response)=>{
+    var id_user = request.body.id_user;
+    var id_friend = request.body.id_friend;
+
+//CALL actualizarAmistad(2,1,3);
+    var miQuery = "CALL actualizarAmistad( " + id_user+ "," + id_friend +" ,"+ 1+ ");";
+    console.log(miQuery);
+
+    conn.query(miQuery, function(err, result){
+        if(err){
+            //console.log(err);
+            console.log("no se pudo aceptar amigo");
+            response.status(502).json('Status: false');
+        }else{
+            console.log(result[0]);
+            response.status(200).json('Status: true');
+        }
+    }); 
+})
+
+
+// rechazar solicitud de amistad
+appUsuario.post('/deleteFriend',(request, response)=>{
+    var id_user = request.body.id_user;
+    var id_friend = request.body.id_friend;
+
+//CALL eliminarAmistad(3,2);
+    var miQuery = "CALL eliminarAmistad( "+ id_user+ "," + id_friend +");";
+    console.log(miQuery);
+
+    conn.query(miQuery, function(err, result){
+        if(err){
+            //console.log(err);
+            console.log("se elimino amigo");
+            response.status(502).json('Status: false');
+        }else{
+            console.log(result[0]);
+            response.status(200).json('Status: true');
+        }
+    }); 
+})
+
+
+
+
+
 
 export default appUsuario
