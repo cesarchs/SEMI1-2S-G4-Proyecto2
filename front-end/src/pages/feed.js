@@ -8,7 +8,7 @@ import { Friends } from "../feed/friends";
 
 export function Feed(){
     
-    const [tabIndex, setTabIndex] = useState(3);
+    const [tabIndex, setTabIndex] = useState(1);
 
     return(
         <div className="container-fluid">
@@ -17,8 +17,8 @@ export function Feed(){
                     <h3 className="">U-Link</h3>
                     <hr/>
                     <div className="d-block w-100">
-                        <img className="img-fluid mb-3 rounded-circle shadow" src="https://dummyimage.com/300x300/000/fff" alt=""/>
-                        <h5>Nombre de Usuario</h5>
+                        <img className="img-fluid mb-3 shadow rounded" src={localStorage.getItem("photo")} alt=""/>
+                        <h5>{localStorage.getItem("fullname")}</h5>
                     </div>
                     <hr/>
                     <div className="d-block w-100">

@@ -7,15 +7,26 @@ import { User } from "../components/user";
 export function Friends(){
 
     const [tabIndex, setTabIndex] = useState(1);
+    const [posts, setPosts] = useState([]);
+
+    // useEffect(() => {        
+    //     const reqOps = {
+    //         method: 'GET',            
+    //         headers: { 'Content-Type': 'application/json' }
+    //     };
+    //     fetch(`http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}/userFiles/${localStorage.getItem("idUsuario")}`, reqOps)
+    //     .then(res => res.json())
+    //     .then(data => setPosts(data));
+    // }, []);
 
     return(
         <div className="container p-5">
             <h3 className="text-light">Amigos</h3>
             <hr className="text-light"></hr>
             <div className="text-light">
-                <button className={tabIndex===1?"btn btn-dark me-3":"btn me-3"} 
+                <button className={tabIndex===1?"btn btn-dark me-3":"btn me-3 text-light"} 
                     onClick={()=>setTabIndex(1)}>Solicitudes</button>
-                <button className={tabIndex===2?"btn btn-dark":"btn"} 
+                <button className={tabIndex===2?"btn btn-dark":"btn text-light"} 
                     onClick={()=>setTabIndex(2)}>Buscar Amigos</button>
             </div>
             <hr className="text-light"></hr>
